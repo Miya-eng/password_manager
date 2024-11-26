@@ -6,8 +6,19 @@ read choice
 
 #Add Passwordを実装
 function add_password() {
+	#データ格納用JSONファイルの初期化
+        file="user_information.json"
+        if [[ ! -f "$file" ]]; then
+                echo "[]" > "$file"
+        fi
         echo "サービス名を入力してください:"
         read service
+	#サービス名の重複確認
+        check_service=$(cat user_information.json | jq --arg check "$service" -r '.[] | select(.service == $check) | .service')
+        if [[ -n "$check_service" ]]; then
+                echo "すでにそのサービス名は存在します。" >&2
+                return 1
+        fi
         echo "ユーザー名を入力してください:"
         read name
         echo "パスワードを入力してください:"
@@ -22,11 +33,6 @@ function add_password() {
 }
 EOF
 )
-        #JSONファイルの初期化
-        file="user_information.json"
-        if [[ ! -f "$file" ]]; then
-                echo "[]" > "$file"
-        fi
         #JSONファイルにデータを格納
         data=$(jq ". += [$info]" "$file")
         echo "$data" > "$file"
