@@ -34,6 +34,19 @@ EOF
         #jq '.' "$file"
 }
 
+#Get Passwordを実装
+function get_password() {
+        echo "サービス名を入力してください:"
+        read user_service
+        #サービス名の値が一致するデータの情報を取得
+        json_file="user_information.json"
+        user_name=$(cat "$json_file" | jq --arg service_name "$user_service" -r '.[] | select(.service == $service_name) | .name')
+        user_password=$(cat "$json_file" | jq --arg service_name "$user_service" -r '.[] | select(.service == $service_name) | .password')
+        echo "サービス名: $user_service"
+        echo "ユーザー名: $user_name"
+        echo "パスワード: $user_password"
+}
+
 #入力処理
 if [[ $choice == "Add Password" ]]; then
         add_password
