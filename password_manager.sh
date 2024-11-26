@@ -36,8 +36,6 @@ EOF
         #JSONファイルにデータを格納
         data=$(jq ". += [$info]" "$file")
         echo "$data" > "$file"
-        #JSONファイルを整形
-        #jq '.' "$file"
 }
 
 #Get Passwordを実装
@@ -48,18 +46,23 @@ function get_password() {
         json_file="user_information.json"
         user_name=$(cat "$json_file" | jq --arg service_name "$user_service" -r '.[] | select(.service == $service_name) | .name')
         user_password=$(cat "$json_file" | jq --arg service_name "$user_service" -r '.[] | select(.service == $service_name) | .password')
-        echo "サービス名: $user_service"
-        echo "ユーザー名: $user_name"
-        echo "パスワード: $user_password"
+        if [[ -n "$user_name" && -n "$user_password" ]]; then		
+		echo "サービス名: $user_service"
+        	echo "ユーザー名: $user_name"
+        	echo "パスワード: $user_password"
+	else
+		echo -e "\nそのサービスは登録されていません。" >&2
+	fi
 }
 
 #入力処理
 if [[ $choice == "Add Password" ]]; then
         add_password
+	echo -e "\nパスワードの追加は成功しました。"
 elif [[ $choice == "Get Password" ]]; then
         get_password
 elif [[ $choice == "Exit" ]]; then
         echo "Thank you!"
 else
-        echo "入力に誤りがあります。再度選択肢から入力してください。"
+        echo -e "\n入力が間違えています。Add Password/Get Password/Exit から入力してください。" >&2
 fi
