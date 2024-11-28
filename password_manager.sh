@@ -47,6 +47,7 @@ EOF
 	#JSONファイルを再度暗号化
 	gpg --symmetric --batch --yes --passphrase "$passphrase" --output "$encrypted_file" "$file"
 	rm -f "$file"
+	echo -e "\nパスワードの追加は成功しました。"
 }
 
 #Get Passwordを実装
@@ -76,7 +77,6 @@ function get_password() {
 #入力処理
 if [[ $choice == "Add Password" ]]; then
         add_password
-	echo -e "\nパスワードの追加は成功しました。"
 elif [[ $choice == "Get Password" ]]; then
         get_password
 elif [[ $choice == "Exit" ]]; then
